@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 
 class Services {
-  static const ROOT = 'http://192.168.43.37:8000/api/example/employees/';
+  static const ROOT = 'http://192.168.1.4:8000/api/employ/employees/';
   static const _CREATE_TABLE_ACTION = 'CREATE_TABLE';
   static const _GET_ALL_ACTION = 'GET_ALL';
   static const _ADD_EMP_ACTION = 'ADD_EMP';
@@ -41,7 +41,7 @@ class Services {
 
   static Future<bool> addEmployee(String firstName, String lastName) async {
     try {
-      var map = Map<String, dynamic>();
+      var map = <String, dynamic>{};
       map['action'] = _ADD_EMP_ACTION;
       map['first_name'] = firstName;
       map['last_name'] = lastName;
@@ -58,10 +58,9 @@ class Services {
   }
 
 
-  static Future<bool> updateEmployee(String empId, String firstName,
-      String lastName) async {
+  static Future<bool> updateEmployee(String empId, String firstName, String lastName) async {
     try {
-      var map = Map<String, dynamic>();
+      var map = <String, dynamic>{};
       map['action'] = _UPDATE_EMP_ACTION;
       map['id'] = empId;
       map['first_name'] = firstName;

@@ -1,82 +1,147 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:frontend_diaryapp/employees/HomePage.dart';
+import 'package:frontend_diaryapp/screens/registration.dart';
+import 'package:frontend_diaryapp/services/authservices.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/global.dart';
+import '../utility/rounded_button.dart';
 
-import '../services/auth.dart';
 
-class Loginscreen extends StatefulWidget {
-  const Loginscreen({Key? key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<Loginscreen> createState() => _LoginscreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginscreenState extends State<Loginscreen> {
+class _LoginScreenState extends State<LoginScreen> {
+  String _email = '';
+  String _password = '';
 
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  loginPressed() async {
+    if (_email.isNotEmpty && _password.isNotEmpty) {
+      http.Response response = await AuthServices.login(_email, _password);
+      Map responseMap = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+      }
+      else {
+        errorSnackBar(context, responseMap.values.first);
+      }
+      pageRoute(responseMap['token']);
+    }
+    else {
+      errorSnackBar(context, 'enter all required fields');
+    }
+  }
 
+  void pageRoute(String token) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.setString("loginPressed", token);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => DataTableDemo(),
+        )
+    );
+  }
 
-  @override
-  void initState() {
-    _emailController.text = 'aziz@test.com';
-    _passwordController.text = 'password';
-    super.initState();
+  void registerRoute() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const RegisterScreen()));
   }
 
   @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-
-  @override
-
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                  controller: _emailController,
-                  validator: (value) => value!.isEmpty ? 'please enter valid email' : null),
-              TextFormField(
-                  controller: _passwordController,
-                  validator: (value) => value!.isEmpty ? 'please enter password' : null),
-              SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                //minWidth: double.infinity,
-                //color: Colors.blue,
-                child: const Text('Login', style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Map creds = {
-                    'email': _emailController.text,
-                    'password': _passwordController.text,
-                    'device_name': 'mobile',
-                  };
-                  if (_formKey.currentState!.validate()) {
-                    Provider.of<Auth>(context, listen: false)
-                        .login(creds: creds);
-                    Navigator.pop(context);
-                  }
-                },
-              )
-            ],
-          ),
-        ),
-      ),
-
-
-
-
+        body: SingleChildScrollView(
+            child: Container(
+                height: 800,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/bg.jpg'),
+                      fit: BoxFit.cover,
+                    )
+                ),
+                child: Stack(
+                    children: [
+                      Positioned(
+                        left: 10,
+                        top: 100,
+                        child: Container(
+                            width: 340,
+                            height: 600,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: const Color(0x66ffffff),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 260,
+                                  ),
+                                  TextField(
+                                    keyboardType: TextInputType.emailAddress,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Enter your email',
+                                    ),
+                                    onChanged: (value) {
+                                      _email = value;
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  TextField(
+                                    obscureText: true,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Enter your password',
+                                    ),
+                                    onChanged: (value) {
+                                      _password = value;
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  RoundedButton(
+                                    buttonText: 'Login',
+                                    onButtonPressed: () => loginPressed(),
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  RoundedButton(
+                                    buttonText: 'Register',
+                                    onButtonPressed: () => registerRoute(),
+                                  )
+                                ],
+                              ),
+                            )
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0, 150, 0, 0),
+                        width: double.infinity,
+                        child: SizedBox(
+                          width: 10,
+                          height: 150,
+                          child: CircleAvatar(
+                            child:Image.asset(
+                              'assets/images/logo-diary.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]
+                )
+            )
+        )
     );
   }
 }
