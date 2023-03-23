@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend_diaryapp/employees/HomePage.dart';
+import 'package:frontend_diaryapp/employees/services.dart';
 import 'package:frontend_diaryapp/screens/registration.dart';
 import 'package:frontend_diaryapp/services/authservices.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../services/global.dart';
 import '../utility/rounded_button.dart';
 
 
@@ -143,5 +143,14 @@ class _LoginScreenState extends State<LoginScreen> {
             )
         )
     );
+  }
+
+
+  errorSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.red,
+      content: Text(text),
+      duration: const Duration(seconds: 1),
+    ));
   }
 }

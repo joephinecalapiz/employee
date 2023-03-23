@@ -205,11 +205,6 @@ class DataTableDemoState extends State<DataTableDemo> {
     );
   }
 
-  // showSnackBar(context, message) {
-  //   _scaffoldKey.currentState!.showSnackBar(SnackBar(
-  //     content: Text(message),
-  //   ));
-  // }
 
   @override
   Widget build(BuildContext context) {

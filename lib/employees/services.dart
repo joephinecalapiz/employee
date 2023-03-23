@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:frontend_diaryapp/employees/employee.dart';
+import 'package:frontend_diaryapp/services/global.dart';
 import 'package:http/http.dart' as http;
 
 
 class Services {
-  static const ROOT = 'http://192.168.1.4:8000/api/employ/employees/';
+  static const ROOT = 'http://192.168.1.4:8000/api/employees/';
+
   static const _CREATE_TABLE_ACTION = 'CREATE_TABLE';
   static const _GET_ALL_ACTION = 'GET_ALL';
   static const _ADD_EMP_ACTION = 'ADD_EMP';
@@ -12,11 +14,12 @@ class Services {
   static const _DELETE_EMP_ACTION = 'DELETE_EMP';
 
 
+
   static Future<List<Employee>> getEmployees() async {
     try {
       var map = Map<String, dynamic>();
       map['action'] = _GET_ALL_ACTION;
-      final response = await http.get(Uri.parse(ROOT));
+      final response = await http.get(Uri.parse(getEmployeeURL));
       print('getEmployees Response: ${response.body}');
       print(response.statusCode);
       print(200 == response.statusCode);
@@ -45,7 +48,7 @@ class Services {
       map['action'] = _ADD_EMP_ACTION;
       map['first_name'] = firstName;
       map['last_name'] = lastName;
-      final response = await http.post(Uri.parse(ROOT), body: map);
+      final response = await http.post(Uri.parse(postEmployeeURL), body: map);
       print('addEmployee Response: ${response.body}');
       if (200 == response.statusCode) {
         return true;
@@ -65,7 +68,7 @@ class Services {
       map['id'] = empId;
       map['first_name'] = firstName;
       map['last_name'] = lastName;
-      final response = await http.put(Uri.parse(ROOT + empId), body: map);
+      final response = await http.put(Uri.parse(putEmployeeURL), body: map);
       print('updateEmployee Response: ${response.body}');
       if (200 == response.statusCode) {
         return true;
@@ -80,7 +83,7 @@ class Services {
 
   static Future<bool> deleteEmployee(String empId) async {
     try {
-      final response = await http.delete(Uri.parse(ROOT + empId));
+      final response = await http.delete(Uri.parse(deleteEmployeeURL));
       print('deleteEmployee Response: ${response.body}');
       if (200 == response.statusCode) {
         return true;
@@ -91,4 +94,10 @@ class Services {
       return false;
     }
   }
+
+
+
+
+
+
 }
