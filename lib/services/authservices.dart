@@ -1,7 +1,10 @@
 
+import 'package:frontend_diaryapp/models/api_response.dart';
 import 'package:frontend_diaryapp/services/global.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../models/user.dart';
 
 
 class AuthServices{
@@ -25,7 +28,8 @@ class AuthServices{
     return response;
   }
 
-  static Future<http.Response> login(String email, String password) async{
+  static Future<ApiResponse> login(String email, String password) async{
+    ApiResponse apiresponse = ApiResponse();
     Map data = {
       "email":email,
       "password":password,
@@ -33,13 +37,16 @@ class AuthServices{
     var body = json.encode(data);
     var url = Uri.parse(loginURL);
     //var url = Uri.parse(baseURL+ 'auth/login');
-    http.Response response = await http.post(
+    final response = await http.post(
       url,
       headers: headers,
       body: body,
     );
+    if(response.statusCode == 200){
+      apiresponse.data = User.fromJson(jsonDecode(response.body));
+    }
     print(response.body);
-    return response;
+    return apiresponse;
   }
 
   static Future<http.Response> logout(String email, String password) async{

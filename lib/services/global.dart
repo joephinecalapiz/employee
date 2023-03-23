@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
-const baseURL = 'http://192.168.1.4:8000';
+const baseURL = 'http://192.168.12.180:8000';
 const loginURL = '$baseURL/api/auth/login';
 const registerURL = '$baseURL/api/auth/register';
 const logoutURL = '$baseURL/api/auth/logout';

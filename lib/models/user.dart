@@ -1,12 +1,43 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 class User {
-  String name;
-  String email;
-  String avatar;
+  int? id;
+  String? name;
+  String? email;
+  String? avatar;
+  String? token;
 
-  User({required this.name, required this.email, required this.avatar});
+  User({
+    this.id,
+    this.name, 
+    this.email,
+    this.avatar,
+    this.token
+    }
+  );
 
-  User.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
-        email = json['email'],
-        avatar = json['avatar'];
+  factory User.fromJson(Map<String,dynamic>json){
+    return User(
+      id: json['user']['id'],
+      name: json['user']['name'],
+      avatar: json['user']['avatar'],
+      email: json['user']['email'],
+      token: json['token']
+    );
+  }
+  
+}
+
+Future<String> getToken()async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('token') ?? '';
+}
+Future<int> getUserId()async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getInt('user_id') ?? 0;
+}
+
+Future<bool> logoutNow()async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.remove('token');
 }
